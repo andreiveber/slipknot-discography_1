@@ -4,11 +4,15 @@
 
 <img width="1930" height="1002" alt="1" src="https://github.com/user-attachments/assets/88a4ffd3-00a1-45ab-b11c-53b1a93dc0de" />
 
+
 <img width="1926" height="1008" alt="2" src="https://github.com/user-attachments/assets/f0d2f33a-4569-49fc-b1a8-532dfd1c6415" />
+
 
 <img width="1930" height="1004" alt="3" src="https://github.com/user-attachments/assets/56185652-48d3-433a-99b9-7cd72cc81e82" />
 
+
 <img width="1920" height="1000" alt="4" src="https://github.com/user-attachments/assets/f32832b5-da72-4e73-abe1-3078d613f320" />
+
 
 React-приложение с информацией о музыкальных альбомах группы **Slipknot**.
 Позволяет просматривать дискографию, добавлять новые альбомы, удалять их и отмечать прослушанные.
