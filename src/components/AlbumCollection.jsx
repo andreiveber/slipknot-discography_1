@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import AlbumCard from './AlbumCard';
 import SongList from './SongList';
+import { FaRegSave } from "react-icons/fa";
+import { RxCross1 } from "react-icons/rx";
+import { IoAddOutline } from "react-icons/io5";
 
-const albums = [
+const initialAlbums = [
     {
         id: 1,
         title: "Slipknot",
@@ -137,35 +140,121 @@ const albums = [
     }
 ];
 
-function AlbumCollection() {
-    const [selectedAlbum, setSelectedAlbum] = useState(null);
+const getNextId = (albumsArray) => {
+    const maxId = albumsArray.reduce((max, album) => Math.max(max, album.id), 0);
+    return maxId + 1;
+};
 
-    const handleAlbumClick = (album) => {
-        setSelectedAlbum(album);
+function AlbumCollection() {
+    const [albums, setAlbums] = useState(initialAlbums);
+    const [selectedAlbum, setSelectedAlbum] = useState(null);
+    const [showForm, setShowForm] = useState(false);
+    const [newTitle, setNewTitle] = useState('');
+    const [newYear, setNewYear] = useState('');
+    const [newSongs, setNewSongs] = useState('');
+
+    const deleteAlbum = (id) => {
+        setAlbums(albums.filter(album => album.id !== id));
     };
 
-    const handleCloseModal = () => {
-        setSelectedAlbum(null);
+    const handleAlbumClick = (album) => setSelectedAlbum(album);
+    const handleCloseModal = () => setSelectedAlbum(null);
+
+    const toggleListened = (id) => {
+        setAlbums(albums.map(album =>
+            album.id === id ? { ...album, isListened: !album.isListened } : album
+        ));
+    };
+
+    const addAlbum = (e) => {
+        e.preventDefault();
+        if (!newTitle.trim() || !newYear) return;
+
+        const songsArray = newSongs.split(',').map(s => s.trim()).filter(s => s);
+        const newId = Math.max(...albums.map(a => a.id), 0) + 1;
+
+        const newAlbum = {
+            id: newId,
+            title: newTitle.trim(),
+            year: parseInt(newYear, 10),
+            image: '/test-album.png',
+            songs: songsArray.length ? songsArray : ['Нет песен'],
+            isListened: false
+        };
+
+        setAlbums([newAlbum, ...albums]);
+        setNewTitle('');
+        setNewYear('');
+        setNewSongs('');
+        setShowForm(false);
     };
 
     return (
         <>
+            <div className="text-center mb-4">
+                <button
+                    className="btn btn-success btn-lg"
+                    onClick={() => setShowForm(!showForm)}
+                >
+                    {showForm ? <RxCross1 className="me-1" /> : <IoAddOutline className="me-1" />}
+                    {showForm ? ' Отменить' : ' Добавить альбом'}
+                </button>
+            </div>
+
+            {showForm && (
+                <div className="card mb-5 p-3 bg-dark text-white">
+                    <h4 className="mb-3">Добавить новый альбом</h4>
+                    <form onSubmit={addAlbum}>
+                        <div className="mb-3">
+                            <label className="form-label">Название альбома</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                value={newTitle}
+                                onChange={(e) => setNewTitle(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <label className="form-label">Год выпуска</label>
+                            <input
+                                type="number"
+                                className="form-control"
+                                value={newYear}
+                                onChange={(e) => setNewYear(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <label className="form-label">Список песен (через запятую)</label>
+                            <textarea
+                                className="form-control"
+                                rows="3"
+                                value={newSongs}
+                                onChange={(e) => setNewSongs(e.target.value)}
+                                placeholder="Например: Песня 1, Песня 2"
+                            />
+                        </div>
+                        <button type="submit" className="btn btn-primary">
+                            <FaRegSave className="me-1" /> Сохранить альбом
+                        </button>
+                    </form>
+                </div>
+            )}
+
             <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                 {albums.map((album) => (
                     <AlbumCard
                         key={album.id}
                         album={album}
                         onAlbumClick={handleAlbumClick}
+                        onDelete={deleteAlbum}
+                        onToggleListened={toggleListened}
                     />
                 ))}
             </div>
 
-            {selectedAlbum && (
-                <SongList
-                    album={selectedAlbum}
-                    onClose={handleCloseModal}
-                />
-            )}
+            {selectedAlbum && <SongList album={selectedAlbum} onClose={handleCloseModal} />}
         </>
     );
 }

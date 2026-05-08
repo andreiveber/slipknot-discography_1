@@ -1,4 +1,8 @@
-function AlbumCard({ album, onAlbumClick }) {
+import { HiOutlineTrash } from "react-icons/hi2";
+import { FaCheckCircle } from "react-icons/fa";
+import { HiXCircle } from "react-icons/hi2";
+
+function AlbumCard({ album, onAlbumClick, onDelete, onToggleListened }) {
     return (
         <div className="col">
             <div className="card h-100 shadow-sm">
@@ -6,24 +10,42 @@ function AlbumCard({ album, onAlbumClick }) {
                     style={{
                         aspectRatio: '1 / 1',
                         backgroundImage: `url(${album.image})`,
-                        backgroundSize: 'cover',
+                        backgroundSize: 'contain',
                         backgroundPosition: 'center',
                         backgroundRepeat: 'no-repeat',
-                        backgroundColor: '#1a1a1a'
+                        backgroundColor: '#1a1a1a',
+                        position: 'relative'
                     }}
-                />
-                <div className="card-body">
-                    <h5 className="card-title">{album.title}</h5>
-                    <p className="card-text">
-                        <strong>Год выпуска:</strong> {album.year}
-                    </p>
-                    <p className="card-text">
-                        <strong>Песни:</strong> {album.songs.length}
-                    </p>
+                >
                     <button
-                        className="btn btn-danger w-100"
-                        onClick={() => onAlbumClick(album)}
+                        className="btn btn-sm btn-danger position-absolute top-0 end-0 m-2"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onDelete(album.id);
+                        }}
+                        style={{ zIndex: 10 }}
                     >
+                        <HiOutlineTrash /> Удалить
+                    </button>
+                </div>
+
+                <div className="card-body">
+                    <div
+                        className="d-flex justify-content-end mb-2"
+                        onClick={() => onToggleListened(album.id)}
+                        style={{ cursor: 'pointer' }}
+                    >
+                        {album.isListened ? (
+                            <FaCheckCircle size={28} color="#28a745" title="Прослушано" />
+                        ) : (
+                            <HiXCircle size={28} color="#dc3545" title="Не прослушано" />
+                        )}
+                    </div>
+
+                    <h5 className="card-title">{album.title}</h5>
+                    <p className="card-text"><strong>Год:</strong> {album.year}</p>
+                    <p className="card-text"><strong>Песен:</strong> {album.songs.length}</p>
+                    <button className="btn btn-danger w-100" onClick={() => onAlbumClick(album)}>
                         Список песен
                     </button>
                 </div>
